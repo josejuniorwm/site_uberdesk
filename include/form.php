@@ -52,8 +52,8 @@ if( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' ) {
 $toemails = array();
 
 $toemails[] = array(
-	'email' => 'contact@redops.online',
-	'name' => 'Admin RedOps'
+	'email' => 'contato@uberdesk.com.br',
+	'name' => 'UberDesk'
 );
 
 
@@ -62,8 +62,8 @@ $toemails[] = array(
 ---------------------------------------------------*/
 
 $fromemail = array(
-	'email' => 'contact@redops.online',
-	'name' => 'RedOps Support'
+	'email' => 'contato@uberdesk.com.br',
+	'name' => 'UberDesk'
 );
 
 
@@ -93,20 +93,12 @@ $mail = new PHPMailer();
 
 $mail->SMTPDebug = 0;
 $mail->isSMTP();
-$mail->Host = 'mail.redops.online';
+$mail->Host = 'mail.uberdesk.com.br';
 $mail->SMTPAuth = true;
-$mail->Username = 'contact@redops.online';
-$mail->Password = 'WZzPv8w5PNjFMq4';
-$mail->SMTPSecure = 'tls';
-$mail->Port = 587;
-
-$mail->SMTPOptions = array(
-	'ssl' => array(
-		'verify_peer' => false,
-		'verify_peer_name' => false,
-		'allow_self_signed' => true,
-	),
-);
+$mail->Username = 'contato@uberdesk.com.br';
+$mail->Password = 'X3.HWsOb?xGXE9Ha';
+$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+$mail->Port = 465;
 
 
 // End of SMTP
