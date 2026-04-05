@@ -23,7 +23,7 @@ if( file_exists( $vendorAutoload ) ) {
 	require __DIR__ . '/phpmailer/src/Exception.php';
 	require __DIR__ . '/phpmailer/src/PHPMailer.php';
 	require __DIR__ . '/phpmailer/src/SMTP.php';
-}
+}	
 
 $allowed_origins = array(
 	'http://localhost:5500',
