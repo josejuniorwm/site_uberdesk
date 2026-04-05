@@ -103,18 +103,37 @@ $mail->Port = 465;
 
 // End of SMTP
 
+$mail->SMTPOptions = array(
+	'ssl' => array(
+		'verify_peer' => false,
+		'verify_peer_name' => false,
+		'allow_self_signed' => true,
+	),
+);
+
+$mail->isHTML( true );
+
+function form_json_response( $alert, $message ) {
+	header( 'Content-Type: application/json; charset=UTF-8' );
+	echo json_encode( array(
+		'alert' => $alert,
+		'message' => $message,
+	), JSON_UNESCAPED_UNICODE );
+	exit;
+}
+
 
 /*-------------------------------------------------
 	Form Messages
 ---------------------------------------------------*/
 
 $message = array(
-	'success'			=> 'We have <strong>successfully</strong> received your Message and will get Back to you as soon as possible.',
-	'error'				=> 'Email <strong>could not</strong> be sent due to some Unexpected Error. Please Try Again later.',
-	'error_bot'			=> 'Bot Detected! Form could not be processed! Please Try Again!',
-	'error_unexpected'	=> 'An <strong>unexpected error</strong> occured. Please Try Again later.',
-	'captcha_invalid'	=> 'Captcha not Validated! Please Try Again!',
-	'captcha_error'		=> 'Captcha not Submitted! Please Try Again.'
+	'success'			=> 'Mensagem recebida com <strong>sucesso</strong>. Retornaremos em breve.',
+	'error'				=> 'Nao foi possivel enviar o e-mail no momento. Tente novamente em instantes.',
+	'error_bot'			=> 'Validacao anti-bot falhou. Tente novamente.',
+	'error_unexpected'	=> 'Ocorreu um erro inesperado. Tente novamente.',
+	'captcha_invalid'	=> 'Captcha invalido. Tente novamente.',
+	'captcha_error'		=> 'Captcha nao enviado. Tente novamente.'
 );
 
 
@@ -164,8 +183,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 	}
 
 	if( $botpassed == false ) {
-		echo '{ "alert": "error", "message": "' . $message['error_bot'] . '" }';
-		exit;
+		form_json_response( 'error', $message['error_bot'] );
 	}
 
 
@@ -201,8 +219,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 	foreach( $submits as $spam_submit ) {
 		if( spam_keyword_check( $spam_submit, $spam_keywords ) || spam_url_check( $spam_submit ) > $allowed_urls ) {
 			// A successful message is displayed to the submitter that makes him think that the Form has been sent so that he cannot modify the keywords to prevent SPAM
-			echo '{ "alert": "success", "message": "' . $message['success'] . '" }';
-			exit;
+			form_json_response( 'success', $message['success'] );
 		}
 	}
 
@@ -229,8 +246,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 		$g_response = json_decode( $recap_response );
 
 		if ( $g_response->success !== true ) {
-			echo '{ "alert": "error", "message": "' . $message['captcha_invalid'] . '" }';
-			exit;
+			form_json_response( 'error', $message['captcha_invalid'] );
 		}
 	}
 
@@ -257,8 +273,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 		$h_response = json_decode( $hcap_response );
 
 		if ( $h_response->success !== true ) {
-			echo '{ "alert": "error", "message": "' . $message['captcha_invalid'] . '" }';
-			exit;
+			form_json_response( 'error', $message['captcha_invalid'] );
 		}
 	}
 
@@ -272,8 +287,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 
 	if( $forcerecap ) {
 		if( !isset( $submits['g-recaptcha-response'] ) ) {
-			echo '{ "alert": "error", "message": "' . $message['captcha_error'] . '" }';
-			exit;
+			form_json_response( 'error', $message['captcha_error'] );
 		}
 	}
 
@@ -500,12 +514,12 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
 			$send_arEmail = $autoresponder->Send();
 		}
 
-		echo '{ "alert": "success", "message": "' . $message['success'] . '" }';
+		form_json_response( 'success', $message['success'] );
 	else:
-		echo '{ "alert": "error", "message": "' . $message['error'] . '<br><br><strong>Reason:</strong><br>' . $mail->ErrorInfo . '" }';
+		form_json_response( 'error', $message['error'] . '<br><br><strong>Detalhes SMTP:</strong><br>' . $mail->ErrorInfo );
 	endif;
 
 } else {
-	echo '{ "alert": "error", "message": "' . $message['error_unexpected'] . '" }';
+	form_json_response( 'error', $message['error_unexpected'] );
 }
 

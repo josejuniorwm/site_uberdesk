@@ -298,6 +298,7 @@
 						}
 
 						if (resultBox) {
+							resultBox.style.display = 'block';
 							resultBox.innerHTML = '<div class="alert alert-' + (data.alert === 'success' ? 'success' : 'danger') + '">' + (data.message || 'Erro ao enviar.') + '</div>';
 						}
 
@@ -307,6 +308,7 @@
 					})
 					.catch(function () {
 						if (resultBox) {
+							resultBox.style.display = 'block';
 							resultBox.innerHTML = '<div class="alert alert-danger">Falha no envio. Tente novamente.</div>';
 						}
 					})
